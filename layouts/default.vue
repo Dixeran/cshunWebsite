@@ -4,8 +4,8 @@
       <v-toolbar-side-icon v-show="isMobile" @click="sideVisible = !sideVisible"></v-toolbar-side-icon>
       <v-toolbar-title class="logo">
         <v-layout align-center>
-          <!-- <img src="~assets/logo-120*120.png" class="mr-2"> -->
-          <span>助顺邮我</span>
+          <img src="~assets/logo-120*120.png" class="mr-2">
+          <span>长顺科技扶贫在线平台</span>
         </v-layout>
       </v-toolbar-title>
       <v-spacer/>
@@ -27,7 +27,7 @@
     </v-content>
     <v-footer class="footer pa-3" dark height="50">
       <v-layout justify-center align-center>
-        ‘助顺邮我’科技扶贫在线平台 &copy; 2018 BUPT
+          &copy; 2018 北京邮电大学 计算机学院
         <v-btn flat class="footer-btn">联系我们</v-btn>
       </v-layout>
     </v-footer>

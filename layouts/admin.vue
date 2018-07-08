@@ -10,7 +10,7 @@
                 <h1>{{user.name}}</h1>
                 <v-layout class="mb-1" wrap>
                     <span v-for="(item,i) in user.role" :key="i" class="tag">
-                        {{item}}
+                        {{$roleMap[item]}}
                     </span>
                 </v-layout>
                 <v-layout column class="mb-3">
@@ -61,27 +61,33 @@ export default {
           icon: "people"
         },
         {
+          title: "商家管理",
+          url: "/admin/business",
+          role: ["ADMIN", "SUB_ADMIN_1"],
+          icon: "shopping_cart"
+        },
+        {
           title: "政策文章",
           url: "/admin/article",
-          role: ["ADMIN", "SUB_ADMIN_1"],
+          role: ["ADMIN", "SUB_ADMIN_2"],
           icon: "insert_drive_file"
         },
         {
           title: "专家解答",
           url: "/admin/consultant",
-          role: ["ADMIN", "SUB_ADMIN_2"],
+          role: ["ADMIN", "SUB_ADMIN_3"],
           icon: "chat"
         },
         {
           title: "旅游资源",
           url: "/admin/source",
-          role: ["ADMIN", "SUB_ADMIN_3"],
+          role: ["ADMIN", "SUB_ADMIN_4"],
           icon: "location_on"
         },
         {
           title: "产销对接",
           url: "admin/sell",
-          role: ["ADMIN", "SUB_ADMIN_4"],
+          role: ["ADMIN", "SUB_ADMIN_5"],
           icon: "receipt"
         }
       ]
