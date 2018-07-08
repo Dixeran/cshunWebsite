@@ -46,76 +46,101 @@
 <script>
 import { mapState, mapMutations, mapActions } from "vuex";
 export default {
-    head() {
-        return {
-            title: "助顺邮我-网站管理",
-        }
-    },
-    data() {
-        return {
-            routes: [
-                { title: "用户管理", url: "/admin/user", role: ['ADMIN'], icon: 'people' },
-                { title: "政策文章", url: "/admin/article", role: ['ADMIN', 'SUB_ADMIN_1'], icon: 'insert_drive_file' },
-                { title: "专家解答", url: "/admin/consultant", role: ['ADMIN', 'SUB_ADMIN_2'], icon: 'chat' },
-                { title: "旅游资源", url: "/admin/source", role: ['ADMIN', 'SUB_ADMIN_3'], icon: 'location_on' },
-                { title: "产销对接", url: "admin/sell", role: ['ADMIN', 'SUB_ADMIN_4'], icon: 'receipt' }
-            ]
-        }
-    },
-    computed: {
-        ...mapState(['isMobile', 'sideBarOpened', 'user']),
-        sideVisible: {
-            get() {
-                return this.sideBarOpened
-            },
-            set(newValue) {
-                this.setSideBar(newValue)
-            }
+  head() {
+    return {
+      title: "助顺邮我-网站管理"
+    };
+  },
+  data() {
+    return {
+      routes: [
+        {
+          title: "用户管理",
+          url: "/admin/user",
+          role: ["ADMIN"],
+          icon: "people"
         },
-        path() {
-            return this.$route.path
+        {
+          title: "政策文章",
+          url: "/admin/article",
+          role: ["ADMIN", "SUB_ADMIN_1"],
+          icon: "insert_drive_file"
         },
-        // 符合当前角色的合法路由
-        availableRoutes() {
-            return this.user ? this.routes.filter(item => this.$hasRole(this.user.role, item.role)) : []
-        }
-    },
-    methods: {
-        ...mapMutations(['setDevice', 'setSideBar']),
-        onResize() {
-            this.setDevice(window.innerWidth < 820)
+        {
+          title: "专家解答",
+          url: "/admin/consultant",
+          role: ["ADMIN", "SUB_ADMIN_2"],
+          icon: "chat"
         },
-
-    },
-    watch: {
-        // 自动跳转到第一条可用路由
-        availableRoutes(newValue, oldValue) {
-            if (newValue !== oldValue && newValue.length) {
-                this.$router.push(this.availableRoutes[0].url)
-            }
+        {
+          title: "旅游资源",
+          url: "/admin/source",
+          role: ["ADMIN", "SUB_ADMIN_3"],
+          icon: "location_on"
+        },
+        {
+          title: "产销对接",
+          url: "admin/sell",
+          role: ["ADMIN", "SUB_ADMIN_4"],
+          icon: "receipt"
         }
+      ]
+    };
+  },
+  computed: {
+    ...mapState(["isMobile", "sideBarOpened", "user"]),
+    sideVisible: {
+      get() {
+        return this.sideBarOpened;
+      },
+      set(newValue) {
+        this.setSideBar(newValue);
+      }
     },
-    mounted() {
-        this.onResize();
-        window.addEventListener('resize', this.onResize, { passive: true })
+    path() {
+      return this.$route.path;
     },
-    beforeDestroy() {
-        if (typeof window !== 'undefined') {
-            window.removeEventListener('resize', this.onResize, { passive: true })
-        }
-    },
-
-}
+    // 符合当前角色的合法路由
+    availableRoutes() {
+      return this.user
+        ? this.routes.filter(item => this.$hasRole(this.user.role, item.role))
+        : [];
+    }
+  },
+  methods: {
+    ...mapMutations(["setDevice", "setSideBar"]),
+    onResize() {
+      this.setDevice(window.innerWidth < 820);
+    }
+  },
+  watch: {
+    // 自动跳转到第一条可用路由
+    availableRoutes(newValue, oldValue) {
+      if (newValue !== oldValue && newValue.length) {
+        this.$router.push(this.availableRoutes[0].url);
+      }
+    }
+  },
+  mounted() {
+    this.onResize();
+    window.addEventListener("resize", this.onResize, { passive: true });
+  },
+  beforeDestroy() {
+    if (typeof window !== "undefined") {
+      window.removeEventListener("resize", this.onResize, { passive: true });
+    }
+  }
+};
 </script>
 
 <style scoped>
-.tag{
-    padding: 0.5em;
-    margin-bottom: 0.5em;
-    border: 1px solid #555;
-    margin-right: 0.5em;
+.tag {
+  padding: 0.5em;
+  margin-bottom: 0.5em;
+  border: 1px solid #555;
+  margin-right: 0.5em;
 }
-.tag:last-child{
-    margin-right: 0;
+.tag:last-child {
+  margin-right: 0;
 }
 </style>

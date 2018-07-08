@@ -45,57 +45,63 @@
 </template>
 
 <script>
-import gql from 'graphql-tag'
-import { mapState, mapMutations } from 'vuex';
-import MyDialog from '@/components/dialog'
+import gql from "graphql-tag";
+import { mapState, mapMutations } from "vuex";
+import MyDialog from "@/components/dialog";
 export default {
-    components: { MyDialog },
-    data() {
-        return {
-            users: [],
-            headers: [
-                { text: '用户名', value: 'name' },
-                { text: "权限", value: 'role' },
-                { text: '上次登录', value: 'lastLoginAt' },
-                { text: '注册时间', value: 'createdAt' }
-            ],
-            mobileHeaders: [
-                { text: '用户名', value: 'name' },
-                { text: "权限", value: 'role' },
-            ],
-            name: "",
-            nameRule: [
-                v => /[a-zA-Z0-9_]{3,16}/.test(v) || "用户名应为3-16位字符"
-            ],
-            password: "",
-            passwordRule: [
-                v => (/[a-zA-Z0-9_]{3,16}/.test(v) || (!this.isCreate && !this.resetPassword)) || "密码应为5-12位字符"
-            ],
-            role: [],
-            roleRule: [
-                v => this.role && this.role.length > 0 || "用户权限不能为空",
-                v => (this.role && this.role.includes('ADMIN') && this.role.length === 1) || this.role && !this.role.includes('ADMIN') || "ADMIN不能与其他权限并存"
-            ],
-            resetPassword: false,
-            editID: "",
-            isCreate: false,
-            dialog: false,
-            loading: 0
-        }
-    },
-    methods: {
-        ...mapMutations(['snackBarOpen']),
-        async submit() {
-            if (this.$refs['form'].validate()) {
-                // 拼装权限字符串
-                let roleStr = '['
-                this.role.forEach(item => {
-                    roleStr += (item + ',')
-                })
-                roleStr += ']'
-                let mutation;
-                if (this.isCreate) {
-                    mutation = gql`mutation{
+  components: { MyDialog },
+  data() {
+    return {
+      users: [],
+      headers: [
+        { text: "用户名", value: "name" },
+        { text: "权限", value: "role" },
+        { text: "上次登录", value: "lastLoginAt" },
+        { text: "注册时间", value: "createdAt" }
+      ],
+      mobileHeaders: [
+        { text: "用户名", value: "name" },
+        { text: "权限", value: "role" }
+      ],
+      name: "",
+      nameRule: [v => /[a-zA-Z0-9_]{3,16}/.test(v) || "用户名应为3-16位字符"],
+      password: "",
+      passwordRule: [
+        v =>
+          /[a-zA-Z0-9_]{3,16}/.test(v) ||
+          (!this.isCreate && !this.resetPassword) ||
+          "密码应为5-12位字符"
+      ],
+      role: [],
+      roleRule: [
+        v => (this.role && this.role.length > 0) || "用户权限不能为空",
+        v =>
+          (this.role &&
+            this.role.includes("ADMIN") &&
+            this.role.length === 1) ||
+          (this.role && !this.role.includes("ADMIN")) ||
+          "ADMIN不能与其他权限并存"
+      ],
+      resetPassword: false,
+      editID: "",
+      isCreate: false,
+      dialog: false,
+      loading: 0
+    };
+  },
+  methods: {
+    ...mapMutations(["snackBarOpen"]),
+    async submit() {
+      if (this.$refs["form"].validate()) {
+        // 拼装权限字符串
+        let roleStr = "[";
+        this.role.forEach(item => {
+          roleStr += item + ",";
+        });
+        roleStr += "]";
+        let mutation;
+        if (this.isCreate) {
+          mutation = gql`mutation{
                         subAdminSignUp(data:{
                             name:"${this.name}"
                             password:"${this.password}"
@@ -105,115 +111,118 @@ export default {
                         }){
                             token
                         }
-                        }`
-                } else if (this.resetPassword) {
-                    mutation =
-                        gql`mutation{subAdminUpdate(id: "${this.editID}", data: { name: "${this.name}", role: { set: ${roleStr}},password:"${this.password}"  }){id}}`
-                } else {
-                    mutation = gql`mutation{subAdminUpdate(id: "${this.editID}", data: { name: "${this.name}", role: { set: ${roleStr}} }){id}}`
-                }
+                        }`;
+        } else if (this.resetPassword) {
+          mutation = gql`mutation{subAdminUpdate(id: "${
+            this.editID
+          }", data: { name: "${
+            this.name
+          }", role: { set: ${roleStr}},password:"${this.password}"  }){id}}`;
+        } else {
+          mutation = gql`mutation{subAdminUpdate(id: "${
+            this.editID
+          }", data: { name: "${this.name}", role: { set: ${roleStr}} }){id}}`;
+        }
 
-                this.loading += 1
-                try {
-                    await this.$apollo.mutate({ mutation })
-                    this.snackBarOpen({
-                        title: "操作成功",
-                        text: `用户:${this.name} 操作成功`
-                    })
-                    this.dialog = false
-                    this.$apollo.queries.users.refetch()
-                } catch (e) {
-                    this.snackBarOpen({
-                        title: "操作失败",
-                        text: e.toString()
-                    })
-                } finally {
-                    this.loading -= 1
-                }
-            }
-
-
-        },
-        async del() {
-            if (confirm('此操作不可恢复,是否继续进行?')) {
-                this.loading += 1
-                const mutation = gql`
+        this.loading += 1;
+        try {
+          await this.$apollo.mutate({ mutation });
+          this.snackBarOpen({
+            title: "操作成功",
+            text: `用户:${this.name} 操作成功`
+          });
+          this.dialog = false;
+          this.$apollo.queries.users.refetch();
+        } catch (e) {
+          this.snackBarOpen({
+            title: "操作失败",
+            text: e.toString()
+          });
+        } finally {
+          this.loading -= 1;
+        }
+      }
+    },
+    async del() {
+      if (confirm("此操作不可恢复,是否继续进行?")) {
+        this.loading += 1;
+        const mutation = gql`
                 mutation {
                       subAdminDelete(id: "${this.editID}") {
                         id
                       }
                     }
-                `
-                try {
-                    await this.$apollo.mutate({ mutation })
-                    this.dialog = false
-                    this.$apollo.queries.users.refetch()
-                    this.snackBarOpen({
-                        title: "操作成功",
-                        text: `用户:${this.name} 操作成功`
-                    })
-                } catch (e) {
-                    this.snackBarOpen({
-                        title: "操作失败",
-                        text: e.toString()
-                    })
-                } finally {
-                    this.loading -= 1
-                }
-            }
+                `;
+        try {
+          await this.$apollo.mutate({ mutation });
+          this.dialog = false;
+          this.$apollo.queries.users.refetch();
+          this.snackBarOpen({
+            title: "操作成功",
+            text: `用户:${this.name} 操作成功`
+          });
+        } catch (e) {
+          this.snackBarOpen({
+            title: "操作失败",
+            text: e.toString()
+          });
+        } finally {
+          this.loading -= 1;
         }
-    },
-    apollo: {
-        users: {
-            query: gql`{
-                 users {
-                   id
-                   role
-                   name
-                   lastLoginAt
-                   createdAt
-                 }
-            }`,
-            loadingKey: 'loading'
+      }
+    }
+  },
+  apollo: {
+    users: {
+      query: gql`
+        {
+          users {
+            id
+            role
+            name
+            lastLoginAt
+            createdAt
+          }
         }
+      `,
+      loadingKey: "loading"
+    }
+  },
+  computed: {
+    ...mapState(["isMobile"])
+  },
+  watch: {
+    // 关闭对话框重置表单
+    dialog(newValue, oldValue) {
+      if (!newValue && oldValue) {
+        this.$refs["form"].reset();
+        this.role = [];
+        this.name = "";
+        this.password = "";
+      }
     },
-    computed: {
-        ...mapState(['isMobile']),
-    },
-    watch: {
-        // 关闭对话框重置表单
-        dialog(newValue, oldValue) {
-            if (!newValue && oldValue) {
-                this.$refs['form'].reset()
-                this.role = []
-                this.name = ""
-                this.password = ""
-
-            }
-        },
-        role(newValue, oldValue) {
-            if (newValue != oldValue) {
-                this.$refs['form'].validate()
-            }
-        }
-    },
-}
-
+    role(newValue, oldValue) {
+      if (newValue != oldValue) {
+        this.$refs["form"].validate();
+      }
+    }
+  }
+};
 </script>
 <style lang="stylus" scoped>
 .role-list {
-    span {
-        padding: 0.5em;
-        border: 1px solid #000;
-        margin-right: 0.5em;
-    }
+  span {
+    padding: 0.5em;
+    border: 1px solid #000;
+    margin-right: 0.5em;
+  }
 
-    span:last-child {
-        margin-right: 0;
-    }
+  span:last-child {
+    margin-right: 0;
+  }
 }
 
 .item {
-    cursor: pointer;
+  cursor: pointer;
 }
 </style>
